@@ -4,7 +4,8 @@
 
 ______________________________________________________________________________________________________________
 
-## If you download the project from Git - Follow the instructions below:
+## Project Download (from Git) 
+- If the project is downloaded from Git - Follow the instructions below:
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
