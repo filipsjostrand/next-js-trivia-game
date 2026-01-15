@@ -1,3 +1,9 @@
+## Trivia Game
+
+- This is a Trivia Game created with questions from: Open Trivia Database (https://opentdb.com/api_config.php)
+
+______________________________________________________________________________________________________________
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
