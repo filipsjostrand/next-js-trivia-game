@@ -1,7 +1,8 @@
 ## Trivia Game
 
 - This is a Trivia Game created with questions from: Open Trivia Database (https://opentdb.com/api_config.php)
-
+- Trivia Game URL: https://next-js-trivia-game.vercel.app
+- (Pick a "Number of Questions", "Category" and press "Start Trivia")
 ______________________________________________________________________________________________________________
 
 ## Project Download (from Git) 
