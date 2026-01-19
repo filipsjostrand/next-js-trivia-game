@@ -225,7 +225,7 @@ export default function TriviaApp() {
             <CardTitle>Quiz Finished 🎉</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-lg text-sm">
+            <p className="text-lg">
               Score: <strong>{score}</strong> / {questions.length}
             </p>
             <Button onClick={() => setStarted(false)}>Play Again</Button>
@@ -242,7 +242,9 @@ export default function TriviaApp() {
           <CardTitle>
             Question {current + 1} / {questions.length}
           </CardTitle>
-          <Badge variant="secondary">Score: {score}</Badge>
+          <Badge
+          className="text-sm"
+          variant="secondary">Score: {score}</Badge>
         </CardHeader>
 
         <CardContent className="space-y-4">
