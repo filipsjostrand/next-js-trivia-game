@@ -225,7 +225,7 @@ export default function TriviaApp() {
             <CardTitle>Quiz Finished 🎉</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-lg">
+            <p className="text-lg text-sm">
               Score: <strong>{score}</strong> / {questions.length}
             </p>
             <Button onClick={() => setStarted(false)}>Play Again</Button>
