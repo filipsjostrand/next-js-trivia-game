@@ -172,7 +172,7 @@ export default function TriviaApp() {
               </SelectTrigger>
               <SelectContent className="max-h-72 overflow-y-auto">
                 {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
+                  <SelectItem key={cat.id} value={cat.id.toString()}>
                     {cat.name}
                   </SelectItem>
                 ))}
