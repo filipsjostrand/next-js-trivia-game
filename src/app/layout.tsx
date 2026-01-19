@@ -28,6 +28,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+                  {/* Top-right Attribution */}
+        <div className="text-gray-200 text-sm sm:absolute sm:top-2 sm:right-6 m-3">
+            Photo:{" "}
+            <a href="https://www.pexels.com/@fatih-turan-63325184/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-gray-300" >
+            Faith Turan (Pexels) </a>
+        </div>
+
         {children}
         <Footer />
       </body>

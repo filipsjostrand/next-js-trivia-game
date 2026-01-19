@@ -23,30 +23,30 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const CATEGORIES = [
-  { id: "9", name: "General Knowledge" },
-  { id: "10", name: "Entertainment: Books" },
-  { id: "11", name: "Entertainment: Film" },
-  { id: "12", name: "Entertainment: Music" },
-  { id: "13", name: "Entertainment: Musicals & Theatres" },
-  { id: "14", name: "Entertainment: Television" },
-  { id: "15", name: "Entertainment: Video Games" },
-  { id: "16", name: "Entertainment: Board Games" },
-  { id: "17", name: "Science & Nature" },
-  { id: "18", name: "Science: Computers" },
-  { id: "19", name: "Science: Mathematics" },
-  { id: "20", name: "Mythology" },
-  { id: "21", name: "Sports" },
-  { id: "22", name: "Geography" },
-  { id: "23", name: "History" },
-  { id: "24", name: "Politics" },
-  { id: "25", name: "Art" },
-  { id: "26", name: "Celebrities" },
-  { id: "27", name: "Animals" },
-  { id: "28", name: "Vehicles" },
-  { id: "29", name: "Entertainment: Comics" },
-  { id: "30", name: "Science: Gadgets" },
-  { id: "31", name: "Entertainment: Japanese Anime & Manga" },
-  { id: "32", name: "Entertainment: Cartoon & Animations" },
+{ id: 27, name: "Animals" },
+{ id: 25, name: "Art" },
+{ id: 26, name: "Celebrities" },
+{ id: 16, name: "Entertainment: Board Games" },
+{ id: 10, name: "Entertainment: Books" },
+{ id: 32, name: "Entertainment: Cartoon & Animations" },
+{ id: 29, name: "Entertainment: Comics" },
+{ id: 11, name: "Entertainment: Film" },
+{ id: 31, name: "Entertainment: Japanese Anime & Manga" },
+{ id: 12, name: "Entertainment: Music" },
+{ id: 13, name: "Entertainment: Musicals & Theatres" },
+{ id: 14, name: "Entertainment: Television" },
+{ id: 15, name: "Entertainment: Video Games" },
+{ id: 9, name: "General Knowledge" },
+{ id: 22, name: "Geography" },
+{ id: 23, name: "History" },
+{ id: 20, name: "Mythology" },
+{ id: 24, name: "Politics" },
+{ id: 17, name: "Science & Nature" },
+{ id: 18, name: "Science: Computers" },
+{ id: 30, name: "Science: Gadgets" },
+{ id: 19, name: "Science: Mathematics" },
+{ id: 21, name: "Sports" },
+{ id: 28, name: "Vehicles" }
 ];
 
 type Question = {
@@ -58,55 +58,96 @@ type Question = {
 export default function TriviaApp() {
   const [amount, setAmount] = useState("5");
   const [category, setCategory] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState("");
   const [type, setType] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState("");
   const [score, setScore] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
 
+
   const startTrivia = async () => {
-    let url = `https://opentdb.com/api.php?amount=${amount}`;
-    if (category) url += `&category=${category}`;
-    if (difficulty) url += `&difficulty=${difficulty}`;
-    if (type) url += `&type=${type}`;
+     try {
+      let url = `https://opentdb.com/api.php?amount=${amount}`;
+      if (category) url += `&category=${category}`;
+      if (difficulty) url += `&difficulty=${difficulty}`;
+      if (type) url += `&type=${type}`;
 
     const res = await fetch(url);
+
+    if (!res.ok) {
+      throw new Error("Network error");
+    }
+
     const data = await res.json();
+
+        if (data.response_code !== 0 || !data.results?.length) {
+      throw new Error("Not enough questions available.");
+    }
+
     setQuestions(data.results);
     setStarted(true);
     setFinished(false);
     setCurrent(0);
     setScore(0);
     setSelected("");
+    setSubmitted(false);
+    setError(null);
+      } catch (err) {
+    console.error(err);
+
+    // Reset to start screen
+    setStarted(false);
+    setFinished(false);
+    setQuestions([]);
+    setError("Could not start trivia. Try different settings.");
+  }
   };
 
   const answers = questions[current]
-    ? [...questions[current].incorrect_answers, questions[current].correct_answer].sort()
-    : [];
+  ? [...questions[current].incorrect_answers, questions[current].correct_answer]
+  : [];
 
-  const submitAnswer = () => {
-    if (selected === questions[current].correct_answer) {
-      setScore((s) => s + 1);
-    }
-    setSelected("");
-    if (current + 1 < questions.length) {
-      setCurrent((c) => c + 1);
-    } else {
-      setFinished(true);
-    }
-  };
+
+    const submitAnswer = () => {
+      setSubmitted(true);
+
+      if (selected === questions[current].correct_answer) {
+        setScore((s) => s + 1);
+      }
+    };
+
+    const nextQuestion = () => {
+      setSubmitted(false);
+      setSelected("");
+
+      if (current + 1 < questions.length) {
+        setCurrent((c) => c + 1);
+      } else {
+        setFinished(true);
+      }
+    };
 
   if (!started) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-muted p-4">
+      <main className="min-h-screen flex items-center justify-center bg-muted p-4 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/images/pexels-fatih-turan-63325184-27519472.jpg')" }}>
         <Card className="w-full max-w-xl">
           <CardHeader>
             <CardTitle className="underline text-xl">Trivia Game</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+
+          {error && (
+            <div className="rounded-md bg-red-100 text-red-700 p-2 text-sm">
+              {error}
+            </div>
+          )}
+
             <div>
               <Label className="pb-1">#️⃣ Number of Questions</Label>
               <Select onValueChange={setAmount} defaultValue="5">
@@ -125,18 +166,18 @@ export default function TriviaApp() {
 
             <div>
               <Label className="pb-1">🗃️ Category</Label>
-<Select onValueChange={setCategory}>
-  <SelectTrigger>
-    <SelectValue placeholder="Any Category" />
-  </SelectTrigger>
-  <SelectContent className="max-h-72 overflow-y-auto">
-    {CATEGORIES.map((cat) => (
-      <SelectItem key={cat.id} value={cat.id}>
-        {cat.name}
-      </SelectItem>
-    ))}
-  </SelectContent>
-</Select>
+            <Select onValueChange={setCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Any Category" />
+              </SelectTrigger>
+              <SelectContent className="max-h-72 overflow-y-auto">
+                {CATEGORIES.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             </div>
 
@@ -210,28 +251,59 @@ export default function TriviaApp() {
             dangerouslySetInnerHTML={{ __html: questions[current].question }}
           />
 
-          <RadioGroup value={selected} onValueChange={setSelected}>
-            {answers.map((answer) => (
-              <div
-                key={answer}
-                className="flex items-center space-x-2"
-              >
-                <RadioGroupItem value={answer} id={answer} />
+        <RadioGroup
+          value={selected}
+          onValueChange={setSelected}
+          disabled={submitted}
+        >
+          {answers.map((answer, index) => {
+            const isCorrect = answer === questions[current].correct_answer;
+            const isSelected = answer === selected;
+
+            const showCorrect = submitted && isCorrect;
+            const showWrong = submitted && isSelected && !isCorrect;
+
+            return (
+              <div key={index} className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value={answer}
+                  id={`answer-${index}`}
+                />
+
                 <Label
-                  htmlFor={answer}
-                  dangerouslySetInnerHTML={{ __html: answer }}
+                  htmlFor={`answer-${index}`}
+                  className={`
+                    cursor-pointer
+                    ${showCorrect ? "text-green-600 font-semibold" : ""}
+                    ${showWrong ? "text-red-600 font-semibold" : ""}
+                  `}
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      answer +
+                      (showCorrect ? " ✔" : "") +
+                      (showWrong ? " ✖" : ""),
+                  }}
                 />
               </div>
-            ))}
-          </RadioGroup>
-
-          <Button
-            className="w-full"
-            onClick={submitAnswer}
-            disabled={!selected}
-          >
-            Submit Answer
-          </Button>
+            );
+          })}
+        </RadioGroup>
+          {!submitted ? (
+            <Button
+              className="w-full"
+              onClick={submitAnswer}
+              disabled={!selected}
+            >
+              Submit Answer
+            </Button>
+          ) : (
+            <Button
+              className="w-full"
+              onClick={nextQuestion}
+            >
+              Next Question
+            </Button>
+          )}
         </CardContent>
       </Card>
     </main>
