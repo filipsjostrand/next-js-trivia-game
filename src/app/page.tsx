@@ -49,11 +49,14 @@ const CATEGORIES = [
 { id: 28, name: "Vehicles" }
 ];
 
-type Question = {
-  question: string;
-  correct_answer: string;
-  incorrect_answers: string[];
-};
+function shuffleArray<T>(array: T[]) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 export default function TriviaApp() {
   const [amount, setAmount] = useState("5");
@@ -89,7 +92,16 @@ export default function TriviaApp() {
       throw new Error("Not enough questions available.");
     }
 
-    setQuestions(data.results);
+  const formattedQuestions = data.results.map((q: Question) => ({
+    ...q,
+    allAnswers: shuffleArray([
+      ...q.incorrect_answers,
+      q.correct_answer,
+    ]),
+  }));
+
+setQuestions(formattedQuestions);
+
     setStarted(true);
     setFinished(false);
     setCurrent(0);
@@ -108,10 +120,14 @@ export default function TriviaApp() {
   }
   };
 
-  const answers = questions[current]
-  ? [...questions[current].incorrect_answers, questions[current].correct_answer]
-  : [];
+  const answers = questions[current]?.allAnswers ?? [];
 
+    type Question = {
+      question: string;
+      correct_answer: string;
+      incorrect_answers: string[];
+      allAnswers?: string[];
+    };
 
     const submitAnswer = () => {
       setSubmitted(true);
